@@ -84,7 +84,7 @@ const photos = [
   },
   {
     id: 9,
-    title: "Makan, cerita, ulang",
+    title: "Makan bersama",
     place: "Denpasar, Bali",
     date: "OKTOBER 2024",
     image:
@@ -146,7 +146,7 @@ function PhotoCard({ photo, index, onSelect, featured = false }) {
       {featured && (
         <span className="absolute left-5 top-5 inline-flex items-center gap-1.5 rounded-full bg-[#fffaf0]/90 px-3 py-1.5 text-[10px] font-bold tracking-[0.13em] text-[#52634c] backdrop-blur-sm">
           <Sparkles size={12} />
-          CERITA FAVORIT
+          FOTO UNGGULAN
         </span>
       )}
       <span className="absolute bottom-0 left-0 right-0 p-4 text-white sm:p-5">
@@ -184,10 +184,10 @@ function App() {
         <div className="mb-5 flex items-end justify-between sm:mb-7">
           <div>
             <p className="text-[10px] font-bold tracking-[0.2em] text-[#8b927f]">
-              ARSIP KENANGAN
+              GIVEAWAY NPS.BEC BANDUNG
             </p>
             <h2 className="mt-1 font-display text-2xl font-semibold sm:text-[30px]">
-              Cerita yang tersimpan
+              Give away Iphone - NPS.BEC Bandung
             </h2>
           </div>
           <span className="pb-1 text-xs text-[#8d8e82]">
@@ -220,7 +220,7 @@ function App() {
               </span>
             </span>
             <span>
-              <span className="block text-sm font-semibold">Masih ada cerita lainnya</span>
+              <span className="block text-sm font-semibold">Masih banyak foto lainnya</span>
               <span className="mt-0.5 block text-[11px] text-[#87897e]">
                 Lihat semua {photos.length} foto
               </span>
@@ -267,12 +267,12 @@ function App() {
               <div className="flex items-center justify-between border-b border-[#eae5db] px-5 py-4 sm:px-8 sm:py-5">
                 <div>
                   <p className="text-[9px] font-bold tracking-[0.19em] text-[#8b927f]">
-                    ALBUM LENGKAP
+                    GIVEAWAY IPHONE
                   </p>
                   <h2 id="album-title" className="mt-0.5 font-display text-xl font-semibold sm:text-2xl">
-                    Semua cerita, satu tempat.
+                    Give away Iphone - NPS.BEC Bandung
                   </h2>
-                  <p className="mt-1 text-[11px] text-[#85877c]">{photos.length} momen tersimpan</p>
+                  <p className="mt-1 text-[11px] text-[#85877c]">{photos.length} foto tersimpan</p>
                 </div>
                 <button
                   type="button"
