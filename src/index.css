@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #28352d;
+  background: #fffaf4;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  margin: 0;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+}
+
+.photo-grid {
+  display: grid;
+  grid-auto-rows: 164px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.photo-card {
+  min-height: 0;
+  isolation: isolate;
+  background: #e7e6dc;
+  box-shadow: 0 2px 8px rgba(48, 53, 41, 0.04);
+}
+
+.photo-card-featured {
+  grid-column: span 2;
+  grid-row: span 2;
+}
+
+.photo-scrim {
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(23, 31, 25, 0.01) 34%, rgba(23, 31, 25, 0.63) 100%);
+  pointer-events: none;
+}
+
+.photo-card > span {
+  z-index: 2;
+}
+
+.photo-open {
+  z-index: 2;
+}
+
+.overlay {
+  background: rgba(31, 38, 31, 0.55);
+  backdrop-filter: blur(7px);
+}
+
+.photo-viewer {
+  background: rgba(20, 24, 21, 0.91);
+  backdrop-filter: blur(10px);
+}
+
+.album-scroll {
+  scrollbar-color: #d3d5c9 transparent;
+  scrollbar-width: thin;
+}
+
+.album-grid {
+  display: grid;
+  grid-auto-rows: 150px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .photo-grid {
+    grid-auto-rows: 190px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .photo-card-featured {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+
+  .album-grid {
+    grid-auto-rows: 185px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .photo-grid {
+    grid-auto-rows: 208px;
+  }
+
+  .album-grid {
+    grid-auto-rows: 200px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 380px) {
+  .photo-grid {
+    grid-auto-rows: 145px;
+    gap: 9px;
+  }
+
+  .photo-card-featured {
+    grid-row: span 2;
+  }
+}
