@@ -3,6 +3,10 @@ import {
   ArrowLeft,
   ArrowRight,
   ArrowUpRight,
+  Check,
+  Crosshair,
+  LoaderCircle,
+  MapPin,
   Sparkles,
   X,
 } from "lucide-react";
@@ -171,11 +175,73 @@ function PhotoCard({ photo, index, onSelect, featured = false }) {
 function App() {
   const [showAlbum, setShowAlbum] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
+  const [locationConsent, setLocationConsent] = useState(false);
+  const [locationStatus, setLocationStatus] = useState({
+    type: "idle",
+    message: "",
+  });
 
   const movePhoto = (direction) => {
     const currentIndex = photos.findIndex((photo) => photo.id === selectedPhoto?.id);
     const nextIndex = (currentIndex + direction + photos.length) % photos.length;
     setSelectedPhoto(photos[nextIndex]);
+  };
+
+  const shareLocation = async () => {
+    if (!locationConsent) return;
+
+    if (!navigator.geolocation) {
+      setLocationStatus({
+        type: "error",
+        message: "Browser ini tidak mendukung fitur lokasi.",
+      });
+      return;
+    }
+
+    setLocationStatus({ type: "loading", message: "Meminta lokasi perangkat..." });
+
+    try {
+      const position = await new Promise((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0,
+        });
+      });
+      const response = await fetch("/api/locations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          consent: true,
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracyM: position.coords.accuracy,
+        }),
+      });
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Lokasi gagal disimpan. Silakan coba lagi.");
+      }
+
+      setLocationStatus({
+        type: "success",
+        message: "Lokasi berhasil disimpan untuk dokumentasi kegiatan.",
+      });
+    } catch (error) {
+      const locationErrors = {
+        1: "Izin lokasi ditolak. Aktifkan izin lokasi di pengaturan browser jika ingin berbagi.",
+        2: "Lokasi perangkat tidak tersedia. Coba lagi di tempat dengan sinyal GPS yang lebih baik.",
+        3: "Permintaan lokasi melewati batas waktu. Silakan coba lagi.",
+      };
+      setLocationStatus({
+        type: "error",
+        message:
+          locationErrors[error.code] ||
+          error.message ||
+          "Terjadi kesalahan saat menyimpan lokasi.",
+      });
+    }
   };
 
   return (
@@ -193,6 +259,70 @@ function App() {
           <span className="pb-1 text-xs text-[#8d8e82]">
             {visiblePhotos.length} foto <span className="mx-1">·</span> pilih untuk melihat
           </span>
+        </div>
+
+        <div className="mb-6 rounded-[1.4rem] border border-[#e8e4d9] bg-[#fffdf9] p-5 shadow-sm sm:mb-8 sm:flex sm:items-center sm:justify-between sm:gap-8 sm:p-6">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#e9eddf] text-[#68795d]">
+              <MapPin size={18} />
+            </span>
+            <div>
+              <h3 className="text-sm font-semibold">Bagikan lokasi kegiatan</h3>
+              <p className="mt-1 max-w-2xl text-xs leading-5 text-[#777a6e]">
+                Lokasi akurat perangkat hanya diambil setelah Anda menyetujui dan
+                menekan tombol. Koordinat, akurasi, dan waktu kirim disimpan untuk
+                dokumentasi kegiatan; hanya 10 kiriman terbaru yang dipertahankan.
+              </p>
+              <label className="mt-3 flex cursor-pointer items-start gap-2 text-xs leading-5 text-[#596558]">
+                <input
+                  type="checkbox"
+                  checked={locationConsent}
+                  onChange={(event) => {
+                    setLocationConsent(event.target.checked);
+                    setLocationStatus({ type: "idle", message: "" });
+                  }}
+                  className="mt-1 accent-[#68795d]"
+                />
+                <span>
+                  Saya setuju membagikan lokasi perangkat saat ini untuk dokumentasi
+                  kegiatan.
+                </span>
+              </label>
+              {locationStatus.message && (
+                <p
+                  className={`mt-2 text-xs ${
+                    locationStatus.type === "error"
+                      ? "text-red-700"
+                      : locationStatus.type === "success"
+                        ? "text-[#526d48]"
+                        : "text-[#777a6e]"
+                  }`}
+                  role="status"
+                >
+                  {locationStatus.message}
+                </p>
+              )}
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={shareLocation}
+            disabled={!locationConsent || locationStatus.type === "loading"}
+            className="mt-4 inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-full bg-[#647d58] px-5 py-2.5 text-xs font-semibold text-white transition hover:bg-[#526a48] disabled:cursor-not-allowed disabled:opacity-50 sm:mt-0"
+          >
+            {locationStatus.type === "loading" ? (
+              <LoaderCircle size={15} className="animate-spin" />
+            ) : locationStatus.type === "success" ? (
+              <Check size={15} />
+            ) : (
+              <Crosshair size={15} />
+            )}
+            {locationStatus.type === "loading"
+              ? "Mengirim lokasi..."
+              : locationStatus.type === "success"
+                ? "Lokasi terkirim"
+                : "Bagikan lokasi saya"}
+          </button>
         </div>
 
         <div className="photo-grid">
